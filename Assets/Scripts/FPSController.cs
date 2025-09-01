@@ -4,6 +4,7 @@ using UnityEngine;
 public class FPSController : MonoBehaviour
 {
     [SerializeField] Rigidbody Rigidbody;
+    [SerializeField] Transform PlayerBody;
     ///////////////////////////////////////////////////
     [Header("Movement Settings")]
     [SerializeField] float WalkSpeed = 5f;
@@ -19,8 +20,8 @@ public class FPSController : MonoBehaviour
     [SerializeField] float VerticalClamp = 85;
     float _MouseX;
     float _MouseY;
-    float xRotation; 
-    float yRotation; 
+    float xRotation;
+    float yRotation;
     ///////////////////////////////////////////////////
     [Header("Jump Settings")]
     [SerializeField] float JumpForce = 5;
@@ -72,10 +73,11 @@ public class FPSController : MonoBehaviour
         _MouseY = Input.GetAxis("Mouse Y") * MouseSensitivity * Time.deltaTime;
 
         yRotation += _MouseX;
-        xRotation -= _MouseY;     
+        xRotation -= _MouseY;
         xRotation = Mathf.Clamp(xRotation, -VerticalClamp, VerticalClamp);
 
         _camera.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        /// PlayerBody.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         transform.rotation = Quaternion.Euler(0, yRotation, 0);
     }
     void CameraBob()
