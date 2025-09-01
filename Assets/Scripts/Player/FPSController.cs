@@ -4,11 +4,14 @@ using UnityEngine;
 public class FPSController : MonoBehaviour
 {
     [SerializeField] Rigidbody Rigidbody;
-    [SerializeField] Transform PlayerBody;
+    [SerializeField] Animator Animator;
+    //[SerializeField] Transform PlayerBody;
+    Transform _spinBone;
+
     ///////////////////////////////////////////////////
     [Header("Movement Settings")]
-    [SerializeField] float WalkSpeed = 5f;
-    [SerializeField] float RunSpeed = 10f;
+    [SerializeField] float WalkSpeed = 7;
+    [SerializeField] float RunSpeed = 13;
     float _Horizontal;
     float _Vertical;
     Vector3 _moveDir;
@@ -16,17 +19,17 @@ public class FPSController : MonoBehaviour
     ///////////////////////////////////////////////////
     [Header("Mouse Settings")]
     [SerializeField] Transform _camera;
-    [SerializeField] float MouseSensitivity = 300;
-    [SerializeField] float VerticalClamp = 85;
+    [SerializeField] float MouseSensitivity = 320;
+    [SerializeField] float VerticalClamp = 65;
     float _MouseX;
     float _MouseY;
     float xRotation;
     float yRotation;
     ///////////////////////////////////////////////////
     [Header("Jump Settings")]
-    [SerializeField] float JumpForce = 5;
-    [SerializeField] Transform GroundCheck;
+    [SerializeField] float JumpForce = 6;
     [SerializeField] float GroundRadius = 0.2f;
+    [SerializeField] Transform GroundCheck;
     [SerializeField] LayerMask GroundMask;
     bool _isGrounded;
     ///////////////////////////////////////////////////
@@ -49,6 +52,7 @@ public class FPSController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         _camDefaultPos = _camera.localPosition;
+        _spinBone = Animator.GetBoneTransform(HumanBodyBones.Spine);
     }
     private void Update()
     {
@@ -64,7 +68,7 @@ public class FPSController : MonoBehaviour
         _Vertical = Input.GetAxis("Vertical");
         _moveDir = new Vector3(_Horizontal, 0, _Vertical);
 
-        _currentSpeed = Input.GetKey(KeyCode.LeftShift) ? RunSpeed : WalkSpeed;
+        _currentSpeed = Input.GetKey(KeyCode.LeftShift) && StaminaUI.CanRun ? RunSpeed : WalkSpeed;
         _moveDir = transform.TransformDirection(_moveDir);
     }
     void MouseRotation()
@@ -77,8 +81,14 @@ public class FPSController : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, -VerticalClamp, VerticalClamp);
 
         _camera.localRotation = Quaternion.Euler(xRotation, 0, 0);
-        /// PlayerBody.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         transform.rotation = Quaternion.Euler(0, yRotation, 0);
+
+        //transform.rotation = Quaternion.Euler(xRotation, yRotation, 0); // for test
+            
+    }
+    private void LateUpdate()
+    {
+      //  _spinBone.localRotation = Quaternion.Euler(xRotation, 0, 0);
     }
     void CameraBob()
     {
